@@ -18,11 +18,20 @@ random.seed(42)
 parser = argparse.ArgumentParser()
 parser.add_argument('-n', '--network', type=str, choices=network.SUPPORTED_NETWORKS, help='Select the network to use for training')
 parser.add_argument('-l', '--labels', type=str, default='labels.csv', help='Location of labels file to be used for training')
-parser.add_argument('-o', '--optimizer', type=str, choices=network.SUPPORTED_OPTIMIZERS, help='Select the optimizer to use for training')
+parser.add_argument('-o', '--optimizer', type=str, choices=network.SUPPORTED_OPTIMIZERS, default='sgd', help='Select the optimizer to use for training')
 parser.add_argument('-w', '--weights', type=str, help='Location of the weights to be loaded for the given model')
 parser.add_argument('-bw', '--builtin_weights', type=str, choices=network.SUPPORTED_WEIGHTS, help='Select the weights to be loaded for the given model')
 parser.add_argument('-ct', '--classification_type', type=str, choices=utils.CLASSIFICATION_TYPES, default=utils.CLASSIFICATION_TYPES[0], help='Select the classification_type for training')
 parser.add_argument('-es', '--early_stopping', dest='early_stopping', action='store_true', help='Stop training training when validation accuracy has stopped improving.')
+parser.add_argument('-lr', '--learning_rate', type=float, default=0.01, help='Increase the rate of gradient step size by increasing value.')
+parser.add_argument('-do1', '--dropout1', type=float, default=0.0, help='Increase the rate of regularization by increasing percentage of nodes to drop on first FC layer')
+parser.add_argument('-do2', '--dropout2', type=float, default=0.0, help='Increase the rate of regularization by increasing percentage of nodes to drop on second FC layer')
+parser.add_argument('-ls1', '--l2_strength1', type=float, default=0.0, help='Increase to increase the regularization strength on first FC layer.')
+parser.add_argument('-ls2', '--l2_strength2', type=float, default=0.0, help='Increase to increase the regularization strength on second FC layer.')
+parser.add_argument('-m', '--momentum', type=float, default=0.9, help='Increase to increase the momentum effect of stochastic optimizers.')
+parser.add_argument('-nest', '--nesterov', type=bool, default=True, help='Use True to apply nesterov momentum')
+parser.add_argument('-d', '--decay', type=float, default=1e-6, help='Increase to speed up the rate at which the learning rate shrinks')
+parser.add_argument('-e', '--epsilon', type=float, default=None, help='Fuzz factor, for use with Adam and Adagrad optimizers')
 
 args = parser.parse_args()
 
@@ -82,8 +91,12 @@ train_iterator = utils.CouplesIterator(utils.make_infinite(gen_func, images_trai
 validation_iterator = utils.CouplesIterator(utils.make_infinite(gen_func, images_validation), input_shape, data_gen, BATCH_SIZE)
 test_iterator = utils.CouplesIterator(utils.make_infinite(gen_func, images_test), input_shape, data_gen, BATCH_SIZE)
 
-model = network.create(input_shape, args.network, args.weights, args.builtin_weights)
-network.compile(model, args.optimizer)
+model = network.create(input_shape, args.network, args.weights, \
+                args.builtin_weights, args.dropout1, args.dropout2, \
+                args.l2_strength1, args.l2_strength2)
+
+network.compile(model, args.optimizer, args.learning_rate, args.decay, \
+        args.momentum, args.nesterov, args.epsilon)
 
 timer = Timer()
 callbacks_list = [ModelCheckpoint('best_train_model.hdf5', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max'), timer]
