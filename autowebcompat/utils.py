@@ -81,7 +81,7 @@ images = {}
 
 
 def load_image(fname, parent_dir='data_resized'):
-    img = load_img(os.path.join(parent_dir, fname), target_size=(48,48))
+    img = load_img(os.path.join(parent_dir, fname), target_size=(128,128))
     #img = load_img(os.path.join(parent_dir, fname), target_size=(224, 224))  #target_size required for pretrained weights
     return img_to_array(img, data_format=keras.backend.image_data_format())
 
