@@ -22,7 +22,8 @@ SUPPORTED_OPTIMIZERS = {
     'sgd': SGD(lr=0.0003, decay=1e-6, momentum=0.9, nesterov=True),
     'adam': Adam(),
     'nadam': Nadam(),
-    'rms': RMSprop()
+    'rms': RMSprop(),
+    'adagrad': Adagrad()
 }
 SUPPORTED_WEIGHTS = ['imagenet']
 SUPPORTED_NETWORKS_WITH_WEIGHTS = ['vgg16', 'vgg19', 'resnet50']

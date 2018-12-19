@@ -14,7 +14,7 @@ from autowebcompat import utils
 
 
 def get_random_hp_config():
-    optimizer_options = ['sgd', 'adam', 'adagrad', 'rmsprop']
+    optimizer_options = ['sgd', 'adam', 'adagrad', 'rms']
     hp = ['vgg16'] # network
     hp.append(random.choice(optimizer_options)) #optimizer
     hp.append(random.uniform(0.0001, 0.1)) #learning rate
