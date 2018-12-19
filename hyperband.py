@@ -110,8 +110,8 @@ def run_and_loss(num_iters, hp):
     test_iterator = utils.CouplesIterator(utils.make_infinite(gen_func, images_test), input_shape, data_gen, BATCH_SIZE)
 
     model = network.create(input_shape, hp[0], 'imagenet', \
-                hp[3],  \
-                hp[5])
+                    'imagenet', hp[3], hp[4], \
+                    hp[5], hp[6])
 
     network.compile(model, hp[1], hp[2], hp[9], \
             hp[7], hp[8], hp[10])

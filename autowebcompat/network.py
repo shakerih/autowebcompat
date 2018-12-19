@@ -191,15 +191,23 @@ def create_resnet50_network(input_shape, weights):
     return Model(inputs=base_model.input, outputs=base_model.get_layer('flatten_1').output)
 
 
-def create(input_shape, network='vgglike', weights=None, builtin_weights=None):
+def create(input_shape, network='vgglike', weights=None, builtin_weights=None, \
+    dropout1=None, dropout2=None, l2_reg_strength1=None, l2_reg_strength2=None):
     assert network in SUPPORTED_NETWORKS, '%s is an invalid network' % network
     assert weights is None or builtin_weights is None, 'only one type of weights are allowed at once'
 
     if builtin_weights:
-        assert network in SUPPORTED_NETWORKS_WITH_WEIGHTS, '%s does not have weights for %s ' % (network, builtin_weights)
+        assert network in SUPPORTED_NETWORKS_WITH_WEIGHTS, \
+        '%s does not have weights for %s ' % (network, builtin_weights)
 
     network_func = globals()['create_%s_network' % network]
-    base_network = network_func(input_shape, builtin_weights)
+    if network == 'vgg16true':
+        base_network = network_func(input_shape, builtin_weights, dropout1, \
+                        dropout2, l2_reg_strength1, l2_reg_strength2)
+    else:
+        base_network = network_func(input_shape, builtin_weights)
+
+
 
     input_a = Input(shape=input_shape)
     input_b = Input(shape=input_shape)
@@ -218,6 +226,7 @@ def create(input_shape, network='vgglike', weights=None, builtin_weights=None):
     distance = Lambda(euclidean_distance, output_shape=eucl_dist_output_shape)([processed_a, processed_b])
 
     return Model([input_a, input_b], distance)
+
 
 
 def contrastive_loss(y_true, y_pred):
