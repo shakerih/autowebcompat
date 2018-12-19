@@ -16,6 +16,7 @@ from keras.optimizers import SGD
 from keras.optimizers import Adam
 from keras.optimizers import Nadam
 from keras.optimizers import RMSprop
+from keras.optimizers import Adagrad
 
 SUPPORTED_NETWORKS = ['inception', 'vgglike', 'vgg16', 'vgg19', 'simnet', 'simnetlike', 'resnet50']
 SUPPORTED_OPTIMIZERS = {
