@@ -139,7 +139,7 @@ def run_and_loss(num_iters, hp):
 
     train_history = train_history.history
     train_history.update({'epoch time': timer.epoch_times})
-    information = vars(args)
+    information = vars(hp)
     information.update({'Accuracy': score, 'Train Time': timer.train_time, 'Number of Train Samples': train_couples_len, 'Number of Validation Samples': validation_couples_len, 'Number of Test Samples': test_couples_len})
     utils.write_train_info(information, model, train_history)
 
