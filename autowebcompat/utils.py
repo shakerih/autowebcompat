@@ -71,7 +71,7 @@ def prepare_images():
 
             if img.size[1] > 732:
                 img = img.crop((0, 0, img.size[0], 732))
-            img = img.resize((24, 24), Image.LANCZOS)
+            img = img.resize((192, 256), Image.LANCZOS)
             img.save(os.path.join('data_resized', f))
         except IOError as e:
             print(e)
@@ -81,8 +81,10 @@ images = {}
 
 
 def load_image(fname, parent_dir='data_resized'):
-    img = load_img(os.path.join(parent_dir, fname), target_size=(224, 224))
+    img = load_img(os.path.join(parent_dir, fname), target_size=(48,48))
+    #img = load_img(os.path.join(parent_dir, fname), target_size=(224, 224))  #target_size required for pretrained weights
     return img_to_array(img, data_format=keras.backend.image_data_format())
+
 
 
 def get_ImageDataGenerator(images, image_shape, parent_dir='data_resized'):
@@ -179,13 +181,13 @@ def make_infinite(gen_func, elems):
 
 
 def read_labels(file_name='labels.csv'):
-    if os.stat(file_name).st_size == 0:
-        raise Exception('labels file is empty')
-    else:
+    try:
         with open(file_name, 'r', newline='') as f:
             next(f)
             reader = csv.reader(f)
             labels = {row[0]: row[1] for row in reader}
+    except FileNotFoundError:
+        labels = {}
     return labels
 
 
