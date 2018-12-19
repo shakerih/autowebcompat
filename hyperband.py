@@ -46,13 +46,27 @@ parser.add_argument('-e', '--epsilon', type=float, default=None, help='Fuzz fact
     '''
     return hp
 
+
+class HP:
+  def __init__(self, network, optimizer, lr, dropout1, dropout2, l21, l22, momentum, nesterov, decay, epsilon):
+    self.network = network
+    self.optimizer = optimizer
+    self.lr = lr
+    self.dropout1 = dropout1
+    self.dropout2 = dropout2
+    self.l21 = l21
+    self.l22 = l22
+    self.momentum = momentum
+    self.nesterov = nesterov
+    self.decay = decay
+    self.epsilon = epsilon
 def run_and_loss(num_iters, hp):
 
 
     BATCH_SIZE = 32
-    EPOCHS = 50
+    EPOCHS = num_iters
     random.seed(42)
-
+    hypdict = HP(hp[0], hp[1],hp[2],hp[3], hp[4], hp[5], hp[6], hp[7], hp[8], hp[9], hp[10])
 
     class Timer(Callback):
         def on_train_begin(self, logs={}):
@@ -139,7 +153,7 @@ def run_and_loss(num_iters, hp):
 
     train_history = train_history.history
     train_history.update({'epoch time': timer.epoch_times})
-    information = vars(hp)
+    information = vars(hypdict)
     information.update({'Accuracy': score, 'Train Time': timer.train_time, 'Number of Train Samples': train_couples_len, 'Number of Validation Samples': validation_couples_len, 'Number of Test Samples': test_couples_len})
     utils.write_train_info(information, model, train_history)
 
