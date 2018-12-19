@@ -1,5 +1,4 @@
 from keras import backend as K
-from keras import regularizers
 from keras.applications.resnet50 import ResNet50
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
@@ -13,21 +12,17 @@ from keras.layers import Lambda
 from keras.layers import MaxPooling2D
 from keras.layers import concatenate
 from keras.models import Model
-from keras.models import Sequential
 from keras.optimizers import SGD
 from keras.optimizers import Adam
 from keras.optimizers import Nadam
 from keras.optimizers import RMSprop
-from keras.optimizers import Adagrad
 
-SUPPORTED_NETWORKS = ['inception', 'vgglike', 'vgg16', 'vgg16true', 'vgg19', \
-                    'simnet', 'simnetlike', 'resnet50']
+SUPPORTED_NETWORKS = ['inception', 'vgglike', 'vgg16', 'vgg19', 'simnet', 'simnetlike', 'resnet50']
 SUPPORTED_OPTIMIZERS = {
     'sgd': SGD(lr=0.0003, decay=1e-6, momentum=0.9, nesterov=True),
     'adam': Adam(),
     'nadam': Nadam(),
-    'rms': RMSprop(),
-    'adagrad': Adagrad()
+    'rms': RMSprop()
 }
 SUPPORTED_WEIGHTS = ['imagenet']
 SUPPORTED_NETWORKS_WITH_WEIGHTS = ['vgg16', 'vgg19', 'resnet50']
@@ -55,7 +50,7 @@ def create_mlp(input_shape, weights):
 
 
 def create_vgg16_network(input_shape, weights):
-    base_model = VGG16(input_shape = input_shape, weights=weights)
+    base_model = VGG16(input_shape=input_shape, weights=weights)
     return Model(inputs=base_model.input, outputs=base_model.get_layer('fc2').output)
 
 
@@ -87,43 +82,6 @@ def create_vgglike_network(input_shape, weights):
 
     return Model(input, x)
 
-
-def create_vgg16true_network(input_shape, weights, dropout1=0.5, dropout2=0.5, \
-    l2_reg_strength1=0.0001, l2_reg_strength2=0.0001):
-    '''
-    Implementation of VGG16 as specified in the original paper by Simonyan
-    and Zisserman. Differs from keras' Applications.VGG16 in that it includes
-    regularization and dropout on the first two fully connected layers.
-    '''
-
-    model = Sequential()
-    model.add(Conv2D(64, (3,3), input_shape=input_shape, padding='same',
-        activation='relu'))
-    model.add(Conv2D(64, (3,3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size = (2,2), strides = (2,2)))
-    model.add(Conv2D(128, (3,3), padding='same', activation='relu'))
-    model.add(Conv2D(128, (3,3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size = (2,2), strides = (2,2)))
-    model.add(Conv2D(256, (3,3), padding='same', activation='relu'))
-    model.add(Conv2D(256, (3,3), padding='same', activation='relu'))
-    model.add(Conv2D(256, (3,3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size = (2,2), strides = (2,2)))
-    model.add(Conv2D(512, (3,3), padding='same', activation='relu'))
-    model.add(Conv2D(512, (3,3), padding='same', activation='relu'))
-    model.add(Conv2D(512, (3,3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size = (2,2), strides = (2,2)))
-    model.add(Conv2D(512, (3,3), padding='same', activation='relu'))
-    model.add(Conv2D(512, (3,3), padding='same', activation='relu'))
-    model.add(Conv2D(512, (3,3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size = (2,2), strides = (2,2)))
-    model.add(Flatten())
-    model.add(Dense(4096, activation='relu', \
-        kernel_regularizer=regularizers.l2(l2_reg_strength1)))
-    model.add(Dropout(dropout1))
-    model.add(Dense(4096, activation='relu', \
-        kernel_regularizer=regularizers.l2(l2_reg_strength2)))
-    model.add(Dropout(dropout2))
-    return Model(inputs=model.input, outputs=model.output)
 
 def create_simnet_network(input_shape, weights):
     L2_REGULARIZATION = 0.001
@@ -204,7 +162,6 @@ def create_simnetlike_network(input_shape, weights):
 def create_inception_network(input_shape, weights):
     """
        Simple architecture with one layer of inception model
-
        param input_shape: shape of the input image
     """
 
@@ -234,23 +191,15 @@ def create_resnet50_network(input_shape, weights):
     return Model(inputs=base_model.input, outputs=base_model.get_layer('flatten_1').output)
 
 
-def create(input_shape, network='vgglike', weights=None, builtin_weights=None, \
-    dropout1=None, dropout2=None, l2_reg_strength1=None, l2_reg_strength2=None):
+def create(input_shape, network='vgglike', weights=None, builtin_weights=None):
     assert network in SUPPORTED_NETWORKS, '%s is an invalid network' % network
     assert weights is None or builtin_weights is None, 'only one type of weights are allowed at once'
 
     if builtin_weights:
-        assert network in SUPPORTED_NETWORKS_WITH_WEIGHTS, \
-        '%s does not have weights for %s ' % (network, builtin_weights)
+        assert network in SUPPORTED_NETWORKS_WITH_WEIGHTS, '%s does not have weights for %s ' % (network, builtin_weights)
 
     network_func = globals()['create_%s_network' % network]
-    if network == 'vgg16true':
-        base_network = network_func(input_shape, builtin_weights, dropout1, \
-                        dropout2, l2_reg_strength1, l2_reg_strength2)
-    else:
-        base_network = network_func(input_shape, builtin_weights)
-
-
+    base_network = network_func(input_shape, builtin_weights)
 
     input_a = Input(shape=input_shape)
     input_b = Input(shape=input_shape)
@@ -264,7 +213,6 @@ def create(input_shape, network='vgglike', weights=None, builtin_weights=None, \
 
     """concatenated = keras.layers.concatenate([processed_a, processed_b])
     out = Dense(1, activation='sigmoid')(concatenated)
-
     model = Model([input_a, input_b], out)"""
 
     distance = Lambda(euclidean_distance, output_shape=eucl_dist_output_shape)([processed_a, processed_b])
@@ -287,18 +235,8 @@ def accuracy(y_true, y_pred):
     return K.mean(K.equal(y_true, K.cast(y_pred < 0.5, y_true.dtype)))
 
 
-def compile(model, optimizer, learning_rate, decay, momentum, nesterov, \
-    epsilon, loss_func=contrastive_loss):
+def compile(model, optimizer='sgd', learning_rate=0.001, loss_func=contrastive_loss):
     assert optimizer in SUPPORTED_OPTIMIZERS, '%s is an invalid optimizer' % optimizer
-    if optimizer == 'sgd':
-        opt = SGD(lr=learning_rate, decay=decay, momentum=momentum, nesterov=nesterov)
-    elif optimizer == 'rms':
-        opt = RMSprop(lr=learning_rate)
-    elif optimizer == 'adam':
-        opt = Adam(lr=learning_rate, epsilon=epsilon, decay=decay)
-    elif optimizer == 'adagrad':
-        opt = Adagrad(lr=learning_rate, decay=decay)
-    else:
-        opt = SUPPORTED_OPTIMIZERS[optimizer]
+    opt = SUPPORTED_OPTIMIZERS[optimizer]
 
-    model.compile(loss=loss_func, optimizer=opt, metrics=[accuracy])
+    model.compile(loss=loss_func, optimizer=opt, lr=learning_rate, metrics=[accuracy])
