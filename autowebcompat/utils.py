@@ -7,7 +7,7 @@ import subprocess
 import sys
 import threading
 
-from PIL import Image
+import Image
 import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
@@ -30,7 +30,7 @@ def mkdir(dir_name):
 
 
 def get_all_images():
-    return [f for f in os.listdir('data') if f.endswith('.png')]
+    return [f for f in os.listdir('data/') if f.endswith('.png')]
 
 
 def get_images():
