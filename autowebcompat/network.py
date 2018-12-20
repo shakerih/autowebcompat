@@ -1,4 +1,5 @@
 from keras import backend as K
+from keras import regularizers
 from keras.applications.resnet50 import ResNet50
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg19 import VGG19
@@ -12,6 +13,7 @@ from keras.layers import Lambda
 from keras.layers import MaxPooling2D
 from keras.layers import concatenate
 from keras.models import Model
+from keras.models import Sequential
 from keras.optimizers import SGD
 from keras.optimizers import Adam
 from keras.optimizers import Nadam
