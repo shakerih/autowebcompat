@@ -176,4 +176,5 @@ for s in reversed(range(s_max+1)):
         n_i = n*eta**(-i)
         r_i = r*eta**(i)
         val_losses = [run_and_loss(num_iters=r_i, hp = t) for t in T]
+        val_losses = np.array(val_losses)
         T = [T[i] for i in np.argsort(val_losses)[0:int(n_i/eta)]]
