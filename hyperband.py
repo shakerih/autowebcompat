@@ -81,7 +81,7 @@ def run_and_loss(num_iters, hp):
 
         def on_train_end(self, logs={}):
             self.train_time = time.time() - self.train_begin_time
-            vars(HP)
+            print("HP: network="+HP.network+", optimizer="+HP.optimizer+", lr="+HP.lr+", do1="+HP.dropout1+", do2="+HP.dropout2+", l21="+HP.l21+", l22="+HP.l22+", momentum="+HP.momentum+", nesterov="+HP.nesterov+", decay="+decay+", epsilon="+HP.epsilon)
 
 
     labels = utils.read_labels('labels.csv')
