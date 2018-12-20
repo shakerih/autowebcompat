@@ -7,7 +7,7 @@ import subprocess
 import sys
 import threading
 
-import Image
+from PIL import Image
 import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
