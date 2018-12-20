@@ -81,6 +81,7 @@ def run_and_loss(num_iters, hp):
 
         def on_train_end(self, logs={}):
             self.train_time = time.time() - self.train_begin_time
+            print(HP)
 
 
     labels = utils.read_labels('labels.csv')
@@ -157,7 +158,7 @@ def run_and_loss(num_iters, hp):
     information.update({'Accuracy': score, 'Train Time': timer.train_time, 'Number of Train Samples': train_couples_len, 'Number of Validation Samples': validation_couples_len, 'Number of Test Samples': test_couples_len})
     utils.write_train_info(information, model, train_history)
 
-    return score
+    return 1/score
 
 max_iter = 81 #max iterations/epochs per configurations
 eta = 3 #downsampling rate
