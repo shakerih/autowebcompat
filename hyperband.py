@@ -17,12 +17,12 @@ def get_random_hp_config():
     optimizer_options = ['sgd', 'adam', 'adagrad', 'rms']
     hp = ['vgg16true'] # network
     hp.append(random.choice(optimizer_options)) #optimizer
-    hp.append(random.uniform(0.0001, 0.1)) #learning rate
+    hp.append(random.uniform(0.00001, 0.01)) #learning rate
     hp.append(np.exp(random.uniform(np.log(0.001), np.log(0.5)))) #dropout1
     hp.append(np.exp(random.uniform(np.log(0.001), np.log(0.5)))) #dropout2
     hp.append(np.exp(random.uniform(np.log(0.0000001), np.log(0.0001)))) #l2 weight decay 1
     hp.append(np.exp(random.uniform(np.log(0.0000001), np.log(0.0001)))) #l2 weight decay 2
-    hp.append(random.uniform(0.6, 0.92)) #momentum
+    hp.append(random.uniform(0.6, 1)) #momentum
     hp.append(random.choice([True, False])) #nesterov
     hp.append(random.uniform(0.0000001, 0.00001)) #decay
     hp.append(random.uniform(0.000000001, 0.0000001)) #epsilon
