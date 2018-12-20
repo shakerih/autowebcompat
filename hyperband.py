@@ -160,7 +160,7 @@ def run_and_loss(num_iters, hp):
 
     return score[0]
 
-max_iter = 81 #max iterations/epochs per configurations
+max_iter = 60 #max iterations/epochs per configurations
 eta = 3 #downsampling rate
 logeta = lambda x: np.log(x)/np.log(eta)
 s_max = int(logeta(max_iter)) #num of unique executions of successive halving minus one.
