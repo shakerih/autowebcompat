@@ -158,7 +158,7 @@ def run_and_loss(num_iters, hp):
     information.update({'Accuracy': score, 'Train Time': timer.train_time, 'Number of Train Samples': train_couples_len, 'Number of Validation Samples': validation_couples_len, 'Number of Test Samples': test_couples_len})
     utils.write_train_info(information, model, train_history)
 
-    return score
+    return score[0]
 
 max_iter = 81 #max iterations/epochs per configurations
 eta = 3 #downsampling rate
@@ -176,6 +176,6 @@ for s in reversed(range(s_max+1)):
         n_i = n*eta**(-i)
         r_i = r*eta**(i)
         val_losses = [run_and_loss(num_iters=r_i, hp = t) for t in T]
-        vl = np.argsort(val_losses)
+        vl = np.argsort(val_losses)[0:int(n_i/eta)]
         vl = np.array(vl)
         T = [T[i] for i in vl]
