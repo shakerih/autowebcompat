@@ -83,7 +83,6 @@ def run_and_loss(num_iters, hp):
         def on_train_end(self, logs={}):
             self.train_time = time.time() - self.train_begin_time
             print("HP: network="+hp[0]+", optimizer="+str(hp[1])+", lr="+str(hp[2])+", do1="+str(hp[3])+", do2="+str(hp[4])+", l21="+str(hp[5])+", l22="+str(hp[6])+", momentum="+str(hp[7])+", nesterov="+str(hp[8])+", decay="+str(hp[9])+", epsilon="+str(hp[10]))
-            K.clear_session()
 
     labels = utils.read_labels('labels.csv')
 
@@ -180,3 +179,4 @@ for s in reversed(range(s_max+1)):
         vl = np.argsort(val_losses)[0:int(n_i/eta)]
         vl = np.array(vl)
         T = [T[i] for i in vl]
+    K.clear_session()
