@@ -134,7 +134,7 @@ def run_and_loss(num_iters, hp):
     timer = Timer()
     callbacks_list = [ModelCheckpoint('best_train_model.hdf5', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max'), timer]
 
-    callbacks_list.append(EarlyStopping(monitor='val_accuracy', patience=2))
+    callbacks_list.append(EarlyStopping(monitor='val_accuracy', patience=6))
 
     train_history = model.fit_generator(train_iterator, callbacks=callbacks_list, validation_data=validation_iterator, steps_per_epoch=train_couples_len / BATCH_SIZE, validation_steps=validation_couples_len / BATCH_SIZE, epochs=EPOCHS)
     score = model.evaluate_generator(test_iterator, steps=test_couples_len / BATCH_SIZE)
